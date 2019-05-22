@@ -5,14 +5,15 @@ import rootReducer from "./reducers";
 const initialState = {};
 
 const middleware = [thunk];
-/*
+
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
     rootReducer,
     initialState,
     composeEnhancers(applyMiddleware(...middleware))
 );
-*/
+
+/*
 const composeEnhancers =
     typeof window === "object" && window._REDUX_DEVTOOLS_EXTENSION_COMPOSE_
         ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
@@ -27,5 +28,5 @@ const store = createStore(
     initialState,
     composingMiddlewareAndDevTools
 );
-
+*/
 export default store;

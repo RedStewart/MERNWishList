@@ -13,7 +13,6 @@ const store = createStore(
     composeEnhancers(applyMiddleware(...middleware))
 );
 */
-
 const composeEnhancers =
     typeof window === "object" && window._REDUX_DEVTOOLS_EXTENSION_COMPOSE_
         ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})

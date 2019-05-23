@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
-const config = require('config');
-const jwt = require('jsonwebtoken');
-const auth = require('../../middleware/auth');
-
+const config = require("config");
+const jwt = require("jsonwebtoken");
+const auth = require("../../middleware/auth");
 // User model
 const User = require("../../models/User");
 
@@ -12,6 +11,7 @@ const User = require("../../models/User");
 // @desc Authenticate user
 // @access Public
 router.post("/", (req, res) => {
+    const jwtSecretKey = process.env.jwtSecret || config.get("jwtSecret");
     const { email, password } = req.body;
 
     // Simple validation
@@ -24,41 +24,39 @@ router.post("/", (req, res) => {
         if (!user) return res.status(400).json({ msg: "User does not exist" });
 
         // validate password
-        bcrypt.compare(password, user.password) 
-            .then(isMatch => {
-                if(!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
+        bcrypt.compare(password, user.password).then(isMatch => {
+            if (!isMatch)
+                return res.status(400).json({ msg: "Invalid credentials" });
 
-                jwt.sign(
-                    { id: user.id },
-                    config.get('jwtSecret'),
-                    //expires in an hour
-                    { expiresIn: 3600 },
-                    (err, token) => {
-                        if(err) throw err;
+            jwt.sign(
+                { id: user.id },
+                jwtSecretKey,
+                //expires in an hour
+                { expiresIn: 3600 },
+                (err, token) => {
+                    if (err) throw err;
 
-                        res.json({
-                            token,
-                            user: {
-                                id: user.id,
-                                name: user.name,
-                                email: user.email
-                            }
-                        });
-                    }
-                );
-            });
+                    res.json({
+                        token,
+                        user: {
+                            id: user.id,
+                            name: user.name,
+                            email: user.email
+                        }
+                    });
+                }
+            );
+        });
     });
 });
 
 // @route GET api/auth/user
 // @desc Get user data
 // @access Private
-router.get('/user', auth, (req, res) => {
+router.get("/user", auth, (req, res) => {
     User.findById(req.user.id)
-        .select('-password')
+        .select("-password")
         .then(user => res.json(user));
-})
-
-
+});
 
 module.exports = router;
